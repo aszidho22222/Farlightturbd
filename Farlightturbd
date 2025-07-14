@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farlight Tournament BD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- New Neon/Purple Theme Variables --- */
+        :root {
+            --background-color: #121212; /* Very dark gray */
+            --primary-color: #1A1A2E; /* Deep purple-blue */
+            --card-color: #1F1F35; /* Slightly lighter card bg */
+            --accent-color: #00F5D4; /* Neon cyan/turquoise */
+            --accent-color-glow: rgba(0, 245, 212, 0.3);
+            --text-color: #F5F7FA; /* Off-white */
+            --subtle-text-color: #a0a0c0;
+            --danger-color: #FF2E63; /* Neon pink/red */
+            --border-color: #3A3A5A;
+        }
+
+        /* --- General & Reset --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        .page {
+            display: none;
+            flex-direction: column;
+            min-height: calc(100vh - 65px); /* Full height minus nav bar */
+            padding: 20px 15px 85px 15px; /* Padding for content + space for nav */
+        }
+        
+        .page.active {
+            display: flex;
+        }
+
+        h1 {
+            color: var(--text-color);
+            text-shadow: 0 0 8px var(--accent-color-glow);
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        /* --- Splash Screen --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        #splash-screen h1 {
+            font-size: 28px;
+            color: var(--text-color);
+            text-shadow: 0 0 10px var(--accent-color-glow);
+        }
+        #splash-screen p {
+            color: var(--subtle-text-color);
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* --- Auth Page --- */
+        #auth-page {
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding-bottom: 0;
+            background: var(--primary-color);
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 320px;
+            padding: 30px;
+            background-color: var(--card-color);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- Forms & Inputs --- */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--subtle-text-color);
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        input[type="datetime-local"],
+        select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            color-scheme: dark; /* Helps style date picker etc. for dark mode */
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px var(--accent-color-glow);
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        .btn-accent {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            box-shadow: 0 0 15px var(--accent-color-glow);
+        }
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--accent-color-glow);
+        }
+        .btn-primary {
+             background-color: transparent;
+             border: 2px solid var(--accent-color);
+             color: var(--accent-color);
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+        }
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: var(--text-color);
+        }
+        .toggle-auth {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 14px;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+        .auth-error {
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--subtle-text-color);
+            cursor: pointer;
+            flex-grow: 1;
+            padding: 10px 0;
+            border-top: 3px solid transparent;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .nav-item .nav-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .nav-item.active {
+            color: var(--accent-color);
+            border-top-color: var(--accent-color);
+        }
+
+        /* --- Home Page & Tournament Cards --- */
+        #home-page .welcome-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+        .tournament-list {
+            width: 100%;
+        }
+        .tournament-card {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .tournament-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px var(--accent-color-glow);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .card-header h3 {
+            font-size: 18px;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+        .card-header .uploader {
+            font-size: 12px;
+            color: var(--subtle-text-color);
+            text-align: right;
+        }
+        .card-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .card-info {
+            color: var(--subtle-text-color);
+        }
+        .card-info span {
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .card-actions .btn {
+            flex-grow: 1;
+        }
+        .card-actions .btn.join-btn { background-color: var(--accent-color); color: var(--primary-color); }
+        .card-actions .btn.edit-btn { background-color: transparent; color: var(--accent-color); border: 1px solid var(--accent-color); }
+        .card-actions .btn.delete-btn { background-color: var(--danger-color); color: var(--text-color); }
+
+
+        /* --- Profile Page --- */
+        #profile-page .profile-info {
+            background: var(--card-color);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .played-count {
+             text-align: center;
+             font-size: 18px;
+             margin-bottom: 20px;
+             color: var(--subtle-text-color);
+        }
+        .played-count span {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent-color);
+            display: block;
+        }
+        #logout-btn {
+            margin-top: 10px;
+            background-color: var(--danger-color);
+        }
+
+        /* --- Loading Spinner --- */
+        .loader-container {
+            text-align: center;
+            padding: 20px;
+        }
+        .loader {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        .modal-content {
+            background: var(--card-color);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 340px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .modal-content h2 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        .modal-info p {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--subtle-text-color);
+        }
+        .modal-info span {
+            font-weight: 700;
+            user-select: all;
+            color: var(--accent-color);
+        }
+        .modal-actions {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main App Container -->
+    <div id="app-container" class="hidden">
+        
+        <!-- Page: Home -->
+        <div id="home-page" class="page">
+            <div id="welcome-header" class="welcome-header"></div>
+            <div id="tournament-list" class="tournament-list">
+                <div class="loader-container"><div class="loader"></div></div>
+            </div>
+        </div>
+
+        <!-- Page: Upload -->
+        <div id="upload-page" class="page">
+            <h1>নতুন টুর্নামেন্ট আপলোড করুন</h1>
+            <form id="upload-form">
+                <div class="form-group">
+                    <label for="tournament-name">টুর্নামেন্টের নাম</label>
+                    <input type="text" id="tournament-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="tournament-mode">মোড</label>
+                    <select id="tournament-mode" required>
+                        <option value="Duo">ডুও (Duo)</option>
+                        <option value="Triple">ট্রিপল (Triple)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tournament-prize-type">পুরস্কারের ধরন</label>
+                    <select id="tournament-prize-type" required>
+                        <option value="💎 Diamond">ডায়মন্ড (Diamond)</option>
+                        <option value="🪙 Coin">কয়েন (Coin)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tournament-prize-amount">পুরস্কারের পরিমাণ</label>
+                    <input type="number" id="tournament-prize-amount" placeholder="যেমন: 500" required>
+                </div>
+                <div class="form-group">
+                    <label for="tournament-time">সময়</label>
+                    <input type="datetime-local" id="tournament-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="tournament-code">রুম কোড</label>
+                    <input type="text" id="tournament-code" required>
+                </div>
+                <div class="form-group">
+                    <label for="tournament-password">রুম পাসওয়ার্ড</label>
+                    <input type="text" id="tournament-password" required>
+                </div>
+                <button type="submit" class="btn btn-accent">আপলোড করুন</button>
+            </form>
+        </div>
+
+        <!-- Page: My Tournaments -->
+        <div id="my-tournaments-page" class="page">
+            <h1>আমার আপলোড করা টুর্নামেন্ট</h1>
+            <div id="my-tournament-list" class="tournament-list">
+                 <div class="loader-container"><div class="loader"></div></div>
+            </div>
+        </div>
+
+        <!-- Page: Profile -->
+        <div id="profile-page" class="page">
+            <h1>আপনার প্রোফাইল</h1>
+            <div class="profile-info">
+                <div class="form-group">
+                    <label for="profile-name">নাম</label>
+                    <input type="text" id="profile-name">
+                </div>
+                <div class="form-group">
+                    <label>ইমেইল</label>
+                    <input type="email" id="profile-email" disabled>
+                </div>
+                 <div class="played-count">আপনি <span id="played-count-display">0</span> টি টুর্নামেন্ট খেলেছেন</div>
+                 <button id="save-profile-btn" class="btn btn-primary">প্রোফাইল সেভ করুন</button>
+                 <button id="logout-btn" class="btn">লগ আউট</button>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-page="home-page"><span class="nav-text">হোম</span></div>
+            <div class="nav-item" data-page="upload-page"><span class="nav-text">আপলোড</span></div>
+            <div class="nav-item" data-page="my-tournaments-page"><span class="nav-text">আমার টুর্নামেন্ট</span></div>
+            <div class="nav-item" data-page="profile-page"><span class="nav-text">প্রোফাইল</span></div>
+        </nav>
+    </div>
+
+    <!-- Auth Page -->
+    <div id="auth-page" class="page active">
+        <div class="auth-container">
+            <h1 id="auth-title">লগইন করুন</h1>
+            <form id="auth-form">
+                <div class="form-group">
+                    <input type="email" id="auth-email" placeholder="আপনার ইমেইল" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="auth-password" placeholder="আপনার পাসওয়ার্ড" required>
+                </div>
+                <button type="submit" id="auth-btn" class="btn btn-accent">লগইন</button>
+                <div id="auth-error" class="auth-error"></div>
+            </form>
+            <button id="toggle-auth-btn" class="toggle-auth">অ্যাকাউন্ট নেই? রেজিস্টার করুন</button>
+        </div>
+    </div>
+    
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <h1>ফারলাইট টুর্নামেন্ট বিডি</h1>
+        <p>Developed by Sazid F84</p>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal-overlay hidden">
+        <div id="modal-content" class="modal-content">
+            <!-- Modal content will be injected by JS -->
+        </div>
+    </div>
+
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6daPZjnoJTOvgpGnIZCCPp7LWAQO4gRs",
+            authDomain: "f84-tur.firebaseapp.com",
+            databaseURL: "https://f84-tur-default-rtdb.firebaseio.com",
+            projectId: "f84-tur",
+            storageBucket: "f84-tur.appspot.com",
+            messagingSenderId: "341066236078",
+            appId: "1:341066236078:web:7456226bf1ca59626c2d3f"
+        };
+
+        // --- Initialize Firebase ---
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        // --- Global State ---
+        let currentUser = null;
+        let isRegisterMode = false;
+
+        // --- DOM Elements ---
+        const DOMElements = {
+            splashScreen: document.getElementById('splash-screen'),
+            appContainer: document.getElementById('app-container'),
+            pages: document.querySelectorAll('.page'),
+            authPage: document.getElementById('auth-page'),
+            authForm: document.getElementById('auth-form'),
+            authTitle: document.getElementById('auth-title'),
+            authBtn: document.getElementById('auth-btn'),
+            authEmail: document.getElementById('auth-email'),
+            authPassword: document.getElementById('auth-password'),
+            toggleAuthBtn: document.getElementById('toggle-auth-btn'),
+            authError: document.getElementById('auth-error'),
+            navItems: document.querySelectorAll('.nav-item'),
+            welcomeHeader: document.getElementById('welcome-header'),
+            tournamentList: document.getElementById('tournament-list'),
+            myTournamentList: document.getElementById('my-tournament-list'),
+            uploadForm: document.getElementById('upload-form'),
+            profileName: document.getElementById('profile-name'),
+            profileEmail: document.getElementById('profile-email'),
+            playedCountDisplay: document.getElementById('played-count-display'),
+            saveProfileBtn: document.getElementById('save-profile-btn'),
+            logoutBtn: document.getElementById('logout-btn'),
+            modal: document.getElementById('modal'),
+            modalContent: document.getElementById('modal-content'),
+        };
+
+        // --- App Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                auth.onAuthStateChanged(user => {
+                    DOMElements.splashScreen.style.opacity = '0';
+                    setTimeout(() => DOMElements.splashScreen.classList.add('hidden'), 500);
+
+                    if (user) {
+                        currentUser = user;
+                        initializeUser();
+                    } else {
+                        currentUser = null;
+                        showPage('auth-page');
+                        DOMElements.appContainer.classList.add('hidden');
+                    }
+                });
+            }, 3000);
+
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            DOMElements.toggleAuthBtn.addEventListener('click', toggleAuthMode);
+            DOMElements.authForm.addEventListener('submit', handleAuth);
+            DOMElements.navItems.forEach(item => item.addEventListener('click', handleNavigation));
+            DOMElements.logoutBtn.addEventListener('click', handleLogout);
+            DOMElements.uploadForm.addEventListener('submit', handleUploadTournament);
+            DOMElements.saveProfileBtn.addEventListener('click', handleSaveProfile);
+            DOMElements.modal.addEventListener('click', (e) => {
+                if(e.target === DOMElements.modal) hideModal();
+            });
+        }
+
+        // --- Page Navigation ---
+        function showPage(pageId) {
+            DOMElements.pages.forEach(page => {
+                page.classList.toggle('active', page.id === pageId);
+            });
+            if (pageId !== 'auth-page') {
+                DOMElements.appContainer.classList.remove('hidden');
+                DOMElements.authPage.classList.remove('active');
+            } else {
+                 DOMElements.appContainer.classList.add('hidden');
+            }
+        }
+
+        function handleNavigation(e) {
+            const targetPageId = e.currentTarget.dataset.page;
+            
+            DOMElements.navItems.forEach(item => item.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+
+            showPage(targetPageId);
+
+            if (targetPageId === 'home-page') loadAllTournaments();
+            if (targetPageId === 'my-tournaments-page') loadMyTournaments();
+            if (targetPageId === 'profile-page') loadProfileData();
+        }
+
+        // --- Authentication ---
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            DOMElements.authTitle.textContent = isRegisterMode ? 'রেজিস্টার করুন' : 'লগইন করুন';
+            DOMElements.authBtn.textContent = isRegisterMode ? 'রেজিস্টার' : 'লগইন';
+            DOMElements.toggleAuthBtn.textContent = isRegisterMode ? 'অ্যাকাউন্ট আছে? লগইন করুন' : 'অ্যাকাউন্ট নেই? রেজিস্টার করুন';
+            DOMElements.authError.textContent = '';
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            const email = DOMElements.authEmail.value;
+            const password = DOMElements.authPassword.value;
+            DOMElements.authError.textContent = '';
+
+            if (isRegisterMode) {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then(userCredential => {
+                        const user = userCredential.user;
+                        db.ref('users/' + user.uid).set({
+                            email: user.email,
+                            name: 'নতুন খেলোয়াড়',
+                            playedCount: 0,
+                            createdAt: firebase.database.ServerValue.TIMESTAMP
+                        });
+                    })
+                    .catch(error => DOMElements.authError.textContent = getFirebaseErrorMessage(error));
+            } else {
+                auth.signInWithEmailAndPassword(email, password)
+                    .catch(error => DOMElements.authError.textContent = getFirebaseErrorMessage(error));
+            }
+        }
+        
+        function getFirebaseErrorMessage(error) {
+            switch (error.code) {
+                case 'auth/invalid-email': return 'ভুল ইমেইল ফরম্যাট।';
+                case 'auth/user-not-found': return 'এই ইমেইলে কোনো অ্যাকাউন্ট নেই।';
+                case 'auth/wrong-password': return 'ভুল পাসওয়ার্ড।';
+                case 'auth/email-already-in-use': return 'এই ইমেইল দিয়ে অ্যাকাউন্ট খোলা আছে।';
+                case 'auth/weak-password': return 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।';
+                default: return 'একটি সমস্যা হয়েছে, আবার চেষ্টা করুন।';
+            }
+        }
+
+        function handleLogout() {
+            auth.signOut();
+        }
+
+        // --- User Initialization ---
+        function initializeUser() {
+            showPage('home-page');
+            loadAllTournaments();
+            loadProfileData();
+        }
+
+        // --- Tournament Logic ---
+        function loadAllTournaments() {
+            const listEl = DOMElements.tournamentList;
+            listEl.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
+            
+            const tournamentsRef = db.ref('tournaments').orderByChild('createdAt');
+            tournamentsRef.on('value', snapshot => {
+                listEl.innerHTML = '';
+                if (!snapshot.exists()) {
+                    listEl.innerHTML = '<p style="text-align: center;">এখন কোনো টুর্নামেন্ট উপলব্ধ নেই।</p>';
+                    return;
+                }
+                const tournaments = [];
+                snapshot.forEach(childSnapshot => {
+                    tournaments.push({ id: childSnapshot.key, ...childSnapshot.val() });
+                });
+                
+                tournaments.reverse().forEach(t => {
+                     listEl.appendChild(createTournamentCard(t, 'all'));
+                });
+            });
+        }
+        
+        function loadMyTournaments() {
+            const listEl = DOMElements.myTournamentList;
+            listEl.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
+
+            const myTournamentsRef = db.ref('tournaments').orderByChild('uploaderUid').equalTo(currentUser.uid);
+            myTournamentsRef.on('value', snapshot => {
+                listEl.innerHTML = '';
+                 if (!snapshot.exists()) {
+                    listEl.innerHTML = '<p style="text-align: center;">আপনি এখনো কোনো টুর্নামেন্ট আপলোড করেননি।</p>';
+                    return;
+                }
+                const tournaments = [];
+                snapshot.forEach(childSnapshot => {
+                    tournaments.push({ id: childSnapshot.key, ...childSnapshot.val() });
+                });
+
+                tournaments.reverse().forEach(t => {
+                     listEl.appendChild(createTournamentCard(t, 'mine'));
+                });
+            });
+        }
+
+        function createTournamentCard(t, type) {
+            const card = document.createElement('div');
+            card.className = 'tournament-card';
+            
+            const formattedTime = new Date(t.time).toLocaleString('bn-BD', {
+                year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+            });
+
+            let actionsHtml = '';
+            if (type === 'all') {
+                actionsHtml = `<button class="btn join-btn">যোগ দিন</button>`;
+            } else { // 'mine'
+                actionsHtml = `
+                    <button class="btn edit-btn">এডিট</button>
+                    <button class="btn delete-btn">ডিলিট</button>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <h3>${t.name}</h3>
+                    <div class="uploader">দ্বারা: ${t.uploaderName}</div>
+                </div>
+                <div class="card-body">
+                    <div class="card-info">মোড: <span>${t.mode}</span></div>
+                    <div class="card-info">পুরস্কার: <span>${t.prizeAmount} ${t.prizeType}</span></div>
+                    <div class="card-info" style="grid-column: 1 / -1;">সময়: <span>${formattedTime}</span></div>
+                </div>
+                <div class="card-actions">${actionsHtml}</div>
+            `;
+            
+            if (type === 'all') {
+                card.querySelector('.join-btn').addEventListener('click', () => showJoinModal(t));
+            } else {
+                card.querySelector('.edit-btn').addEventListener('click', () => showEditModal(t));
+                card.querySelector('.delete-btn').addEventListener('click', () => deleteTournament(t.id));
+            }
+
+            return card;
+        }
+
+        function handleUploadTournament(e) {
+            e.preventDefault();
+            const formData = {
+                name: document.getElementById('tournament-name').value,
+                mode: document.getElementById('tournament-mode').value,
+                prizeType: document.getElementById('tournament-prize-type').value,
+                prizeAmount: document.getElementById('tournament-prize-amount').value,
+                time: document.getElementById('tournament-time').value,
+                roomCode: document.getElementById('tournament-code').value,
+                roomPassword: document.getElementById('tournament-password').value,
+                uploaderUid: currentUser.uid,
+                uploaderName: DOMElements.profileName.value || currentUser.email,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            const newTournamentRef = db.ref('tournaments').push();
+            newTournamentRef.set(formData)
+                .then(() => {
+                    alert('টুর্নামেন্ট সফলভাবে আপলোড হয়েছে!');
+                    DOMElements.uploadForm.reset();
+                    document.querySelector('.nav-item[data-page="home-page"]').click();
+                })
+                .catch(error => alert('একটি সমস্যা হয়েছে: ' + error.message));
+        }
+
+        function deleteTournament(tournamentId) {
+            if (confirm('আপনি কি নিশ্চিতভাবে এই টুর্নামেন্টটি ডিলিট করতে চান?')) {
+                db.ref('tournaments/' + tournamentId).remove()
+                    .then(() => alert('টুর্নামেন্ট ডিলিট করা হয়েছে।'))
+                    .catch(error => alert('একটি সমস্যা হয়েছে: ' + error.message));
+            }
+        }
+        
+        // --- Profile Logic ---
+        function loadProfileData() {
+            db.ref('users/' + currentUser.uid).on('value', snapshot => {
+                const userData = snapshot.val();
+                if (userData) {
+                    DOMElements.profileName.value = userData.name || '';
+                    DOMElements.profileEmail.value = userData.email;
+                    DOMElements.welcomeHeader.textContent = `স্বাগতম, ${userData.name || userData.email.split('@')[0]}`;
+                    DOMElements.playedCountDisplay.textContent = userData.playedCount || 0;
+                }
+            });
+        }
+        
+        function handleSaveProfile() {
+            const newName = DOMElements.profileName.value.trim();
+            if (newName) {
+                db.ref('users/' + currentUser.uid).update({ name: newName })
+                    .then(() => alert('প্রোফাইল সফলভাবে সেভ হয়েছে!'))
+                    .catch(error => alert('একটি সমস্যা হয়েছে: ' + error.message));
+            }
+        }
+
+        // --- Modal & Gameplay Logic ---
+        function showModal(contentHtml) {
+            DOMElements.modalContent.innerHTML = contentHtml;
+            DOMElements.modal.classList.remove('hidden');
+        }
+
+        function hideModal() {
+            DOMElements.modal.classList.add('hidden');
+            DOMElements.modalContent.innerHTML = '';
+        }
+
+        function showJoinModal(tournament) {
+            const content = `
+                <h2>${tournament.name}</h2>
+                <div class="modal-info">
+                    <p>রুম কোড: <span>${tournament.roomCode}</span></p>
+                    <p>পাসওয়ার্ড: <span>${tournament.roomPassword}</span></p>
+                </div>
+                <div class="modal-actions">
+                    <button id="played-btn" class="btn btn-primary">আমি এই ম্যাচটি খেলেছি</button>
+                    <button onclick="hideModal()" class="btn btn-accent">বন্ধ করুন</button>
+                </div>
+            `;
+            showModal(content);
+            
+            const playedBtn = document.getElementById('played-btn');
+            const playedMatchRef = db.ref(`users/${currentUser.uid}/playedMatches/${tournament.id}`);
+            
+            playedMatchRef.once('value', snapshot => {
+                if (snapshot.exists()) {
+                    playedBtn.textContent = 'খেলা হয়েছে';
+                    playedBtn.disabled = true;
+                } else {
+                    playedBtn.addEventListener('click', () => {
+                        handlePlayedMatch(tournament.id, playedBtn);
+                    }, { once: true });
+                }
+            });
+        }
+        
+        function showEditModal(tournament) {
+             const content = `
+                <h2>টুর্নামেন্ট এডিট করুন</h2>
+                <form id="edit-form">
+                    <div class="form-group">
+                        <label>টুর্নামেন্টের নাম</label>
+                        <input type="text" id="edit-name" value="${tournament.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>পুরস্কারের ধরন</label>
+                        <select id="edit-prize-type" required>
+                            <option value="💎 Diamond">ডায়মন্ড</option>
+                            <option value="🪙 Coin">কয়েন</option>
+                        </select>
+                    </div>
+                     <div class="form-group">
+                        <label>পুরস্কারের পরিমাণ</label>
+                        <input type="number" id="edit-prize-amount" value="${tournament.prizeAmount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>সময়</label>
+                        <input type="datetime-local" id="edit-time" value="${tournament.time}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>রুম কোড</label>
+                        <input type="text" id="edit-code" value="${tournament.roomCode}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>রুম পাসওয়ার্ড</label>
+                        <input type="text" id="edit-password" value="${tournament.roomPassword}" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-accent">সেভ করুন</button>
+                        <button type="button" onclick="hideModal()" class="btn btn-danger">বাতিল করুন</button>
+                    </div>
+                </form>
+            `;
+            showModal(content);
+
+            document.getElementById('edit-prize-type').value = tournament.prizeType; // Pre-select prize type
+
+            document.getElementById('edit-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const updates = {
+                    name: document.getElementById('edit-name').value,
+                    prizeType: document.getElementById('edit-prize-type').value,
+                    prizeAmount: document.getElementById('edit-prize-amount').value,
+                    time: document.getElementById('edit-time').value,
+                    roomCode: document.getElementById('edit-code').value,
+                    roomPassword: document.getElementById('edit-password').value,
+                };
+                db.ref('tournaments/' + tournament.id).update(updates)
+                  .then(() => {
+                      alert('আপডেট সফল হয়েছে!');
+                      hideModal();
+                  })
+                  .catch(error => alert('সমস্যা: ' + error.message));
+            });
+        }
+        
+        function handlePlayedMatch(tournamentId, button) {
+             db.ref(`users/${currentUser.uid}/playedMatches/${tournamentId}`).set(true);
+             const playedCountRef = db.ref(`users/${currentUser.uid}/playedCount`);
+             playedCountRef.transaction(currentCount => (currentCount || 0) + 1);
+             
+             button.textContent = 'ধন্যবাদ!';
+             button.disabled = true;
+        }
+
+    </script>
+</body>
+</html>
